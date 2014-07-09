@@ -1,0 +1,1 @@
+static image + blob fill ONLY
