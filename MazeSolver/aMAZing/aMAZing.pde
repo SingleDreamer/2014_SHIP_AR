@@ -19,6 +19,7 @@ void setup() {
   println(s);
 
   MazeSolver mz = new MazeSolver(m, 1, 0, 3, 3);
+ 
 }
 void draw() {
 }

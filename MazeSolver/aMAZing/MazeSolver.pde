@@ -24,6 +24,17 @@ class MazeSolver {
     fringe.add(nodes[startY][startX]);
     ArrayList<Node> sol = brianSolve();
     println(sol.toString());
+    applySolution(sol);
+    String s="";
+    for (int r=0; r<4; r++) {
+      for (int c=0; c<5; c++) {
+        s+=maze[r][c]+"\t";
+      }
+      s+="\n";
+    }
+    println("after");
+    println(s);
+    
     //solve();
   }
 
@@ -186,6 +197,11 @@ class MazeSolver {
       return (nodes[r][c] != null) && (!nodes[r][c].isVisited());
     }
     return false;
+  }
+  void applySolution(ArrayList<Node> s){
+    for(Node n : s){
+      maze[n.getY()][n.getX()]=-1;
+    }
   }
 }
 
