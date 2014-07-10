@@ -5,7 +5,7 @@ Augmented Reality project for CSTUY SHIP 2014
 
 ----
 ####Project 1: 
-AR mazefinder. Use edge detection to translate an image (either static or camera) into a binary 2D array. 
+AR mazesolver. Use edge detection to translate an image (either static or camera) into a binary 2D array. 
 <br>
   > 0 = free space <p>1 = wall <p> -1 = path
 <br>
