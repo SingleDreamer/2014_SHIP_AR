@@ -2,6 +2,7 @@ class Node implements Comparable{
  
   int x, y, h;
   ArrayList<Node> path;
+  boolean visited = false;
 
 
   public Node(int x, int y){
@@ -24,10 +25,16 @@ class Node implements Comparable{
   int getH(){
     return h;
   }
+  void setH(int newh){
+    h = newh;
+  }
   ArrayList<Node> getPath(){
     return path;
   }
   void addToPath(Node n){
+    for(Node x : n.getPath()){
+      path.add(x);
+    }
     path.add(n);
   }
   
@@ -39,6 +46,13 @@ class Node implements Comparable{
     else{
       return 0;
     }
+  }
+  
+  boolean isVisited(){
+    return visited;
+  }
+  void setVisited(boolean v){
+    visited = v;
   }
   
   String toString() { 
