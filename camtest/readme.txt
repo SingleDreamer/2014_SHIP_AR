@@ -1,0 +1,1 @@
+camera + (crappy) edge detection ONLY

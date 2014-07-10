@@ -1,0 +1,1 @@
+(neater code) hopefully camera + blob but god knows
