@@ -1,3 +1,4 @@
+//grayscale doesn't actually work as... edge detection
 import processing.video.*;
 Capture cam;
 
