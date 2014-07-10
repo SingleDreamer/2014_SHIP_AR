@@ -36,17 +36,18 @@ void draw() {
   //print (cam.width + " " + cam.height + "\n");
   //print (pixels [0]);
   for (int i = 1; i < dimension - 1; i += 1) { 
-    if ( abs (grayscale( pixels[i]) - grayscale (pixels[i+1])) > 5) {
-      if (pixels[i] != color (234, 23, 123)) {
+    if ( //abs (grayscale( pixels[i]) - grayscale (pixels[i+1])) > 5) {
+      border (i, 15)) {
+      //if (pixels[i] != color (234, 23, 123)) {
         pixels[i] = color(0);
-      }     
+      //}     
     }
   } 
   for (int i = 0; i < dimension - 1; i += 1) { 
     if (pixels [i] != color (0)) {
-      if (pixels[i] != color (234, 23, 123)) {
+      //if (pixels[i] != color (234, 23, 123)) {
         pixels[i] = color(250);   
-      }
+      //}
     }
   } 
   updatePixels();
@@ -59,4 +60,16 @@ int grayscale (color c ) {
   int B = int (unhex (t.substring (6)));
   int gs = (R + G + B)/3;
   return gs;
+}
+
+boolean border (int i, int j) {
+  if ( i > x && i%x != 1 && i%x != 0 && i < x*y-x) {
+    float top = abs (grayscale (pixels [i-x]));
+    float bottom = abs (grayscale (pixels [i+x]));
+    float right = abs (grayscale (pixels [i+1]));
+    float left = abs (grayscale (pixels [i-1]));
+    float c = sqrt (sq (right - left) + sq (top - bottom));
+    return c < j;
+  }
+  return false;
 }
