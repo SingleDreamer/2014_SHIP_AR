@@ -11,7 +11,7 @@ class MazeSolver {
   //ArrayList<Node> open = new ArrayList<Node>();
   ArrayList<Node> closedSet = new ArrayList<Node>();
 
-  PriorityQueue<Node> fringe = new PriorityQueue<Node>();//Brian is using this for testing 
+  PriorityQueue<Node> fringe = new PriorityQueue<Node>();//Brian is using this for testing
 
 
   public MazeSolver(int[][] m, int sx, int sy, int ex, int ey) {
@@ -26,9 +26,9 @@ class MazeSolver {
     println(sol.toString());
     applySolution(sol);
     String s="";
-    for (int r=0; r<4; r++) {
-      for (int c=0; c<5; c++) {
-        s+=maze[r][c]+"\t";
+    for (int r=0; r<maze.length; r++) {
+      for (int c=0; c<maze[0].length; c++) {
+        s+=maze[r][c]+" ";
       }
       s+="\n";
     }
@@ -70,6 +70,7 @@ class MazeSolver {
       int r = next.getY();
       int c = next.getX();
       Node tl, t, tr, l, ri, dl, d, dr;
+      
       if (isLegal(r-1, c-1)) {
         tl = nodes[r-1][c-1];
         tl.addToPath(next);
@@ -77,6 +78,7 @@ class MazeSolver {
         tl.setVisited(true);
         fringe.add(tl);
       }
+      
       if (isLegal(r-1, c)) {
         t = nodes[r-1][c];
         t.addToPath(next);
@@ -130,63 +132,63 @@ class MazeSolver {
     return null;
   }
 
-//  void solve() {
+// void solve() {
 //
-//    Node start = new Node(startX, startY); //starting node 
-//    openSet.add(start); //add starting node to openSet 
-//    boolean done = false;
-//    Node current; 
+// Node start = new Node(startX, startY); //starting node
+// openSet.add(start); //add starting node to openSet
+// boolean done = false;
+// Node current;
 //
-//    while (! (done)) { 
-//      current = //get node with lowest fCost from openlist
-//      closedSet.add(current);
-//      openSet.remove(current);
-//    }
-//  }
-//
-//
-//
-//  Node lowestFInOpen() { //returns Node with lowest fCost in openSet
-//  }
-//
-//  /////////////better pseudocode
-//  /*
-//    create the open list of nodes, initially containing only our starting node
-//   create the closed list of nodes, initially empty
-//   while (we have not reached our goal) {
-//   consider the best node in the open list (the node with the lowest f value)
-//   if (this node is the goal) {
-//   then we're done
-//   }
-//   else {
-//   move the current node to the closed list and consider all of its neighbors
-//   for (each neighbor) {
-//   if (this neighbor is in the closed list and our current g value is lower) {
-//   update the neighbor with the new, lower, g value 
-//   change the neighbor's parent to our current node
-//   }
-//   else if (this neighbor is in the open list and our current g value is lower) {
-//   update the neighbor with the new, lower, g value 
-//   change the neighbor's parent to our current node
-//   }
-//   else this neighbor is not in either the open or closed list {
-//   add the neighbor to the open list and set its g value
-//   */
+// while (! (done)) {
+// current = //get node with lowest fCost from openlist
+// closedSet.add(current);
+// openSet.remove(current);
+// }
+// }
 //
 //
-//  /////////////////////////////
-//  /*while there is something in the fringe
-//   remove the next node
-//   add all unvisited neighbors to the frontier
-//   mark them as visited
-//   and remove that node
-//   continue this until we find the end
-//   to recover path once we are at end, give each node a list of nodes
-//   when a node is added to frontier, the added node is appened to that nodes list/
-//   */
 //
-//  //Node n = fringe.poll();
-//  //}
+// Node lowestFInOpen() { //returns Node with lowest fCost in openSet
+// }
+//
+// /////////////better pseudocode
+// /*
+// create the open list of nodes, initially containing only our starting node
+// create the closed list of nodes, initially empty
+// while (we have not reached our goal) {
+// consider the best node in the open list (the node with the lowest f value)
+// if (this node is the goal) {
+// then we're done
+// }
+// else {
+// move the current node to the closed list and consider all of its neighbors
+// for (each neighbor) {
+// if (this neighbor is in the closed list and our current g value is lower) {
+// update the neighbor with the new, lower, g value
+// change the neighbor's parent to our current node
+// }
+// else if (this neighbor is in the open list and our current g value is lower) {
+// update the neighbor with the new, lower, g value
+// change the neighbor's parent to our current node
+// }
+// else this neighbor is not in either the open or closed list {
+// add the neighbor to the open list and set its g value
+// */
+//
+//
+// /////////////////////////////
+// /*while there is something in the fringe
+// remove the next node
+// add all unvisited neighbors to the frontier
+// mark them as visited
+// and remove that node
+// continue this until we find the end
+// to recover path once we are at end, give each node a list of nodes
+// when a node is added to frontier, the added node is appened to that nodes list/
+// */
+//
+// //Node n = fringe.poll();
+// //}
   int h(Node n) {
     float ahead = dist(n.getX(), n.getY(), endX, endY); //distance between node and end
     float traveled = n.getPath().size();
@@ -203,5 +205,7 @@ class MazeSolver {
       maze[n.getY()][n.getX()]=-1;
     }
   }
+  int[][] getMaze(){
+    return maze;
+  }
 }
-
