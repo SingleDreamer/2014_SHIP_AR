@@ -37,7 +37,7 @@ int[][] buffer, board;
 boolean edge, blob;
 //path does not show up on maze3?????
 void setup() {
-  img = loadImage("maze3.png");
+  img = loadImage("maze4.png");
   size(img.width, img.height);
   edges = createImage(width, height, RGB);
   blobs = createImage(width, height, RGB);
@@ -223,15 +223,29 @@ void mousePressed() {
   if (count == 0) {
     x1 = mouseX;
     y1 = mouseY;
+    ellipseMode(CENTER);
+    noStroke();
+    fill(0,255,0,128);
+    ellipse(x1,y1,10,10);
     count ++;
   } else if (count == 1) {
     x2 = mouseX;
     y2 = mouseY;
+    ellipseMode(CENTER);
+    noStroke();
+    fill(255,0,0,128);
+    ellipse(x2,y2,10,10);
     count++;
   } else if (count == 2) {
     MazeSolver something = new MazeSolver (board, /*1, 1, board.length - 2, board[0].length - 2*/x1, y1, x2, y2);
     translate (something.getMaze());
     image (path, 0, 0);
+    ellipseMode(CENTER);
+    noStroke();
+    fill(0,255,0,128);
+    ellipse(x1,y1,10,10);
+    fill(255,0,0,128);
+    ellipse(x2,y2,10,10);
     count++;
   }
   else {
