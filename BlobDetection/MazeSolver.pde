@@ -22,6 +22,7 @@ class MazeSolver {
     endY=ey;
     setupNodes();
     fringe.add(nodes[startY][startX]);
+    /*
     ArrayList<Node> sol = brianSolve();
     if (sol == null) {
       println("no solution!!!");
@@ -38,7 +39,7 @@ class MazeSolver {
     }
     println("after");
     println(s);
-
+    */
     //solve();
   }
 
@@ -284,4 +285,3 @@ class MazeSolver {
     return path;
   }
 }
-
