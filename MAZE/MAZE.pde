@@ -213,12 +213,12 @@ void fillBoard() {
         board[y][x] = 0;
     }
   }
-  for (int x = 0; x < width; x++) {
-  for (int y = 0; y < height; y++) {
-  print(board[x][y]);
-  }
-  println();
-  }
+//  for (int x = 0; x < width; x++) {
+//  for (int y = 0; y < height; y++) {
+//  print(board[x][y]);
+//  }
+//  println();
+//  }
 }
 
 void mousePressed() {
