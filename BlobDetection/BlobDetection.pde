@@ -4,13 +4,15 @@
 
 PImage img, edges, blobs, path, current;
 color bg = color(255);
-color fg = color(0);
+color fg = color(200);
 int threshold = 50;
 float contrastAdj = 0.4;
 int pivot = 255 / 2;
 int count, x1, y1, x2, y2;
 boolean solved;
 float r2 = sqrt(2);
+ArrayList<Node> sol;
+int i = 0;
 float[][] kernelLR = {
   {
     1, 0, -1
@@ -37,7 +39,7 @@ int[][] buffer, board;
 boolean edge, blob;
 //path does not show up on maze3?????
 void setup() {
-  img = loadImage("maze4.png");
+  img = loadImage("maze3.png");
   size(img.width, img.height);
   edges = createImage(width, height, RGB);
   blobs = createImage(width, height, RGB);
@@ -63,6 +65,12 @@ void draw() {
   //  fillBoard();
   //print ("(" + mouseX + ", " + mouseY + ")" + " (" + x1 + ", " + y1 + ") " + "(" + x2 + ", " + y2 + " )" + "\n");
 //  print (board[mouseX][mouseY]);
+
+  if(sol != null && i<sol.size()){
+    Node n = sol.get(i);
+    set(n.getX(),n.getY(),color(0,0,255));
+    i++;
+  }
 }
 
 void drawEdges() {
@@ -237,9 +245,14 @@ void mousePressed() {
     ellipse(x2,y2,10,10);
     count++;
   } else if (count == 2) {
+    int start = millis();
     MazeSolver something = new MazeSolver (board, /*1, 1, board.length - 2, board[0].length - 2*/x1, y1, x2, y2);
+    sol = something.brianSolve();
+    /*
     translate (something.getMaze());
     image (path, 0, 0);
+//    image (edges, 0, 0);
+*/
     ellipseMode(CENTER);
     noStroke();
     fill(0,255,0,128);
@@ -247,6 +260,8 @@ void mousePressed() {
     fill(255,0,0,128);
     ellipse(x2,y2,10,10);
     count++;
+    int step = millis();
+    println (start - step + "ms");
   }
   else {
     println ("no more actions bozo");
@@ -266,7 +281,12 @@ void translate (int[][] p) {
       } else {
         path.set(j, i, color(0, 255, 0));
       }
+//      if (p [i][j] == -1) {
+//        edges.set(j, i, color(255, 0, 0));
+//      }
+//      else {
+//        path.set(j, i, color (0,0,0,0));
+//      }
     }
   }
 }
-
