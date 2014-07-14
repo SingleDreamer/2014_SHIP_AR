@@ -43,6 +43,7 @@ class Node implements Comparable{
     parent = n;
   }
   
+  //Node are compared based on the heuristic value
   int compareTo(Object o){
     if(o instanceof Node){
       Node n = (Node)o;
