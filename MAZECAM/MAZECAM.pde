@@ -43,12 +43,19 @@ int[][] buffer, board;
 boolean edge, blob;
 
 String currentImage;
-int picNum = 1;
+//int picNum;
 
 void setup() {
-
-  size (640, 480);
+//  picNum = 1;
+  
+  //size (640, 480); FIX THIS AT SOME POINT
+  size(500,500);
+  i = 0;
   count = 0;
+  edges = createImage(width, height, RGB);
+  blobs = createImage(width, height, RGB);
+  buffer = new int[width][height];
+  board = new int[width][height];
 
   String[] cameras = Capture.list();
 
@@ -78,14 +85,14 @@ void draw() {
     // without any additional resizing, transformations, or tint.
     //set(0, 0, cam);
   } else if (count == 1) {
-    
-    img = loadImage(currentImage);
-    size(img.width, img.height);
-    edges = createImage(width, height, RGB);
-    blobs = createImage(width, height, RGB);
-    buffer = new int[width][height];
-    board = new int[width][height];
 
+//    img = loadImage(currentImage);
+    //size(img.width, img.height);
+    //    edges = createImage(width, height, RGB);
+    //    blobs = createImage(width, height, RGB);
+    //    buffer = new int[width][height];
+    //    board = new int[width][height];
+    img = loadImage ("test.png");
     drawEdges();
     image(edges, 0, 0);
     fillBoard();
@@ -122,8 +129,8 @@ void draw() {
 
 void mousePressed() {
   if (count == 0) {
-    saveFrame ("test-" + picNum + ".png");
-    currentImage = "test-" + picNum + ".png";
+    saveFrame ("test.png");
+//    currentImage = "test-" + picNum + ".png";
     count++;
   } else if (count == 1) {
     x1 = mouseX;
@@ -141,9 +148,8 @@ void mousePressed() {
     int step = millis();
     println (step - start + "ms");
   } else {
-    count = 0;
-    picNum++;
     i = 0;
+    count = 0;
   }
 }
 
@@ -286,8 +292,7 @@ void fillBoard() {
       else 
         board[y][x] = 0;
       if (x == 0 || x == height - 1 || y == 0 || y == width - 1) 
-        board[y][x] = 1;  
+        board[y][x] = 1;
     }
   }
 }
-
