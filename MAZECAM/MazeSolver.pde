@@ -1,146 +1,298 @@
-import java.util.*;
+//make it so can update picture
+//add realtime search color 
+//arrayindexoutofboundsexception???
 
-class MazeSolver {
 
-  int[][] maze;
-  Node[][] nodes;
-  int startX, startY;
-  Node start, end;
-  int endX, endY;
-  PriorityQueue<Node> fringe = new PriorityQueue<Node>();
+import processing.video.*;
+Capture cam;
 
-  public MazeSolver(int[][] m, int sx, int sy, int ex, int ey) {
-    maze=m;
-    startX=sx;
-    startY=sy;
-    endX=ex;
-    endY=ey;
-    setupNodes();
-    fringe.add(nodes[startY][startX]); //at the start, the fringe only contains the start node
+
+PImage img, edges, blobs, current;
+color bg = color(255);
+color fg = color(200);
+int threshold = 50;
+float contrastAdj = 0.4;
+int pivot = 255 / 2;
+int count, x1, y1, x2, y2;
+float r2 = sqrt(2);
+ArrayList<Node> sol;
+int i;
+float[][] kernelLR = {
+  {
+    1, 0, -1
   }
-
-  void setupNodes() {
-    nodes = new Node[maze.length][maze[0].length];
-    for (int r=0; r<maze.length; r++) {
-      for (int c=0; c<maze[0].length; c++) {
-        if (maze[r][c]==0) {
-          //we can go here
-          nodes[r][c] = new Node(c, r);
-          if (c==startX && r==startY) {
-            //we found the start
-            start = nodes[r][c];
-            start.setTraveled(0);
-            start.setH(h(start));
-          }
-          if (c==endX && r==endY) {
-            //we found the end
-            end = nodes[r][c];
-          }
-        }
-      }
-    }
+  , {
+    2, 0, -2
   }
-
-  ArrayList<Node> brianSolve() {
-    //while there is something in the fringe
-    while (fringe.size ()>0) {
-      Node next = fringe.poll(); //get the best node in the fringe (based on heuristic)
-      //keep removing from fringe until next has not already been removed
-      while (next.isVisited ()) {
-        next = fringe.poll();
-      }
-      next.setVisited(true); //make sure this node is not removed from the fringe ever again
-      println("next: "+next);
-      if (next == end) {
-        //we found the end!
-        ArrayList<Node> path = getPath(next);
-        return path;
-      }
-
-      //try to add all 8 neighbors to the fringe
-      int r = next.getY();
-      int c = next.getX();
-      addNode(next, r-1, c-1);
-      addNode(next, r-1, c);
-      addNode(next, r-1, c+1);
-      addNode(next, r, c-1);
-      addNode(next, r, c+1);
-      addNode(next, r+1, c-1);
-      addNode(next, r+1, c);
-      addNode(next, r+1, c+1);
-    }
-
-    //there is nothing left in the fringe and the end has not been found ==> there is no solution to the given maze
-    println("empty fringe; no solution");
-    PImage err = new PImage(maze[0].length,maze.length);
-    for(int x=0; x<err.width; x++){
-      for(int y=0; y<err.height; y++){
-        color c = color(255);
-        if(maze[y][x]==0){
-          c=color(0);
-        }
-        err.set(x,y,c);
-      }
-    } 
-    err.save(savePath("error.png"));
-    return null;
+  , {
+    1, 0, -1
   }
-
-  void addNode(Node prev, int r, int c) {
-    if (isLegal(r, c)) {
-      Node next = nodes[r][c];
-      //if the new traveled is a shorter path to next than its current travelled, then we should add it to the fringe
-      float newTraveled = prev.getTraveled()+dist(prev.getX(), prev.getY(), c, r); 
-      if (newTraveled < next.getTraveled()) {
-        next.setParent(prev); //update the node's parent
-        next.setTraveled(newTraveled); //update the node's distance traveled
-        next.setH(h(next)); //update the node's heuristic
-        fringe.add(next); //add the node to the fringe
-      }
-    }
-  } 
-
-  float h(Node n) {   
-    //a node's heuristic is the sum of the distance it has traveled and the optimal distance to the end 
-    float ahead = dist(n.getX(), n.getY(), endX, endY); //distance between node and end
-    float traveled = n.getTraveled();
-    return (ahead+traveled);
+};
+float[][] kernelUD = {
+  {
+    1, 2, 1
   }
-
-  boolean isLegal(int r, int c) {
-    //a node is legal if it is on the board, we can move there, and it has not already been removed from the fringe
-    if (r>=0 && c>=0 && r<nodes.length && c<nodes[0].length) {
-      return (nodes[r][c] != null) && (!nodes[r][c].isVisited());
-    }
-    return false;
+  , {
+    0, 0, 0
   }
-
-  void applySolution(ArrayList<Node> s) {
-    //updates the maze to reflect the solution path
-    for (Node n : s) {
-      maze[n.getY()][n.getX()]=-1; // an element of the maze that is part of the path is marked with a -1
-    }
+  , {
+    -1, -2, -1
   }
+};
+int[][] buffer, board;
+boolean edge, blob;
+
+String currentImage;
+//int picNum;
+
+void setup() {
+//  picNum = 1;
   
-  int[][] getMaze() {
-    return maze;
+  //size (640, 480); FIX THIS AT SOME POINT
+  size(500,500);
+  i = 0;
+  count = 0;
+  edges = createImage(width, height, RGB);
+  blobs = createImage(width, height, RGB);
+  buffer = new int[width][height];
+  board = new int[width][height];
+
+  String[] cameras = Capture.list();
+
+  if (cameras.length == 0) {
+    println("There are no cameras available for capture.");
+    exit();
+  } else {
+    println("Available cameras:");
+    for (int i = 0; i < cameras.length; i++) {
+      println(cameras[i]);
+    }
+
+    // The camera can be initialized directly using an 
+    // element from the array returned by list():
+    cam = new Capture(this, cameras[0]);
+    cam.start();
   }
+}
 
-  ArrayList<Node> getPath(Node n) {
-    ArrayList<Node> path = new ArrayList<Node>();
-    while (n != start) {
-      path.add(n);
-      n = n.getParent();
+void draw() {
+  if (count == 0) {
+    if (cam.available() == true) {
+      cam.read();
     }
-    path.add(n);
+    image(cam, 0, 0);
+    // The following does the same, and is faster when just drawing the image
+    // without any additional resizing, transformations, or tint.
+    //set(0, 0, cam);
+  } else if (count == 1) {
 
-    //reverse path so that it goes from start to end
-    for (int i=0; i<path.size ()/2; i++) {
-      Node tmp = path.get(path.size()-i-1);
-      path.set(path.size()-i-1, path.get(i));
-      path.set(i, tmp);
+//    img = loadImage(currentImage);
+    //size(img.width, img.height);
+    //    edges = createImage(width, height, RGB);
+    //    blobs = createImage(width, height, RGB);
+    //    buffer = new int[width][height];
+    //    board = new int[width][height];
+    img = loadImage ("test.png");
+    drawEdges();
+    image(edges, 0, 0);
+    fillBoard();
+  } else if (count == 2) {
+    drawEdges();
+    image(edges, 0, 0);
+    fillBoard();
+    ellipseMode(CENTER);
+    noStroke();
+    fill(0, 255, 0, 128);
+    ellipse(x1, y1, 10, 10);
+  } else if (count == 3) {
+    drawEdges();
+    image(edges, 0, 0);
+    fillBoard();
+    ellipseMode(CENTER);
+    noStroke();
+    fill(0, 255, 0, 128);
+    ellipse(x1, y1, 10, 10);
+    ellipseMode(CENTER);
+    noStroke();
+    fill(255, 0, 0, 128);
+    ellipse(x2, y2, 10, 10);
+  } else if (count == 4) {
+    if (sol != null && i<sol.size()) {
+      Node n = sol.get(i);
+      set(n.getX(), n.getY(), color(0, 0, 255));
+      fill(0, 0, 255, 128);
+      ellipse(n.getX(), n.getY(), 5, 5);
+      i++;
     }
+  }
+}
 
-    return path;
+void mousePressed() {
+  if (count == 0) {
+    saveFrame ("test.png");
+//    currentImage = "test-" + picNum + ".png";
+    count++;
+  } else if (count == 1) {
+    x1 = mouseX;
+    y1 = mouseY;
+    count++;
+  } else if (count == 2) {
+    x2 = mouseX;
+    y2 = mouseY;
+    count++;
+  } else if (count == 3) {
+    int start = millis();
+    MazeSolver something = new MazeSolver (board, /*1, 1, board.length - 2, board[0].length - 2*/x1, y1, x2, y2);
+    sol = something.brianSolve();
+    count++;
+    int step = millis();
+    println (step - start + "ms");
+  } else {
+    i = 0;
+    count = 0;
+  }
+}
+
+void drawEdges() {
+  for (int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+      if (x == 0 || x == width - 1 || y == 0 || y == width - 1) 
+        edges.set(x, y, fg);
+      else 
+        checkEdges(x, y);
+    }
+  }
+}
+
+void checkEdges(int x, int y) {
+  int horizontal = 0, vertical = 0;
+  float value;
+  int c = averageVal(x, y);
+  for (int i = -1; i < 2; i++) {
+    for (int j = -1; j < 2; j++) {
+      horizontal += abs(averageVal(x + i, y + j) - c) * kernelLR[i + 1][j + 1];
+      vertical += abs(averageVal(x + i, y + j) - c) * kernelUD[i + 1][j + 1];
+    }
+  }
+  value = sqrt(sq(horizontal) + sq(vertical));
+  if (value > threshold) 
+    edges.set(x, y, fg);
+  else 
+    edges.set(x, y, bg);
+}
+
+int averageVal(int x, int y) {
+  color c = img.get(x, y);
+  float r = red(c);
+  float g = green(c);
+  float b = blue(c);
+  float value = (r + g + b) / 3;
+  if (value > pivot) 
+    value += (255 - value) * contrastAdj;
+  else
+    value -= value * contrastAdj;
+  return (int)value;
+}
+
+void keyPressed() {
+  if (key == 'e') 
+    edge = !edge;
+  if (key == 'b');
+  blob = !blob;
+  if (key == 'a') 
+    pivot -= 1;
+  if (key == 'd')
+    pivot += 1;
+  if (keyCode == UP)
+    contrastAdj += 0.01;
+  if (keyCode == DOWN) 
+    contrastAdj -= 0.01;
+  if (keyCode == LEFT)
+    threshold -= 1;
+  if (keyCode == RIGHT)
+    threshold += 1; 
+  checkAdj();
+}
+
+void checkAdj() {
+  if (pivot > 255) 
+    pivot =  255;
+  if (pivot < 0) 
+    pivot = 0;
+  if (threshold < 0)
+    threshold = 0;
+  if (contrastAdj < 0)
+    contrastAdj = 0;
+  if (contrastAdj > 1)
+    contrastAdj = 1;
+}
+
+void blobDetect() {
+  int count = 1;
+  for (int x = 1; x < width - 1; x++) {
+    for (int y = 1; y < height - 1; y++) {
+      if (edges.get(x, y) == bg) {
+        int a = buffer[x - 1][y - 1];
+        int b = buffer[x][y - 1];
+        int c = buffer[x + 1][y - 1];
+        int d = buffer[x - 1][y];
+        if (a == 0 && b == 0 && c == 0 && d == 0) {
+          buffer[x][y] = count;
+          count++;
+        } else {
+          int min = findMin(a, b, c, d);
+          buffer[x][y] = min;
+          if (edges.get(x - 1, y - 1) == fg) 
+            buffer[x - 1][y - 1] = min;
+          if (edges.get(x, y - 1) == fg) 
+            buffer[x][y - 1] = min;
+          if (edges.get(x + 1, y - 1) == fg) 
+            buffer[x + 1][y - 1] = min;
+          if (edges.get(x - 1, y) == fg) 
+            buffer[x - 1][y ] = min;
+        }
+      }
+    }
+  }
+  blobFill(count);
+}
+
+int findMin(int a, int b, int c, int d) {
+  int[] arr = {
+    a, b, c, d
+  };
+  int min = max(arr);
+  if (a < min && a != 0)
+    min = a;
+  if (b < min && b != 0)
+    min = b;
+  if (c < min && c != 0)
+    min = c;
+  if (d < min && d != 0)
+    min = d;  
+  return min;
+}
+
+void blobFill(int c) {
+  float fill = 255 / c;
+  for (int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+      int label = buffer[x][y];
+      color co = color(fill * label, 0, 0);
+      blobs.set(x, y, co);
+    }
+  }
+}
+
+void fillBoard() {
+  for (int x = 0; x < height; x++) {
+    for (int y = 0; y < width; y++) {
+      if (edges.get(x, y) == fg) 
+        board[y][x] = 1;
+      else 
+        board[y][x] = 0;
+      if (x == 0 || x == height - 1 || y == 0 || y == width - 1) 
+        board[y][x] = 1;
+    }
   }
 }
