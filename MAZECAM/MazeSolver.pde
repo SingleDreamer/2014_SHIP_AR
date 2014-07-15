@@ -72,6 +72,17 @@ class MazeSolver {
 
     //there is nothing left in the fringe and the end has not been found ==> there is no solution to the given maze
     println("empty fringe; no solution");
+    PImage err = new PImage(maze[0].length,maze.length);
+    for(int x=0; x<err.width; x++){
+      for(int y=0; y<err.height; y++){
+        color c = color(255);
+        if(maze[y][x]==0){
+          c=color(0);
+        }
+        err.set(x,y,c);
+      }
+    } 
+    err.save(savePath("error.png"));
     return null;
   }
 
@@ -133,4 +144,3 @@ class MazeSolver {
     return path;
   }
 }
-
