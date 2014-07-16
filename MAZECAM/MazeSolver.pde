@@ -50,7 +50,7 @@ class MazeSolver {
         next = fringe.poll();
       }
       next.setVisited(true); //make sure this node is not removed from the fringe ever again
-      println("next: "+next);
+//      println("next: "+next);
       if (next == end) {
         //we found the end!
         ArrayList<Node> path = getPath(next);
