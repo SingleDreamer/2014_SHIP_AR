@@ -41,7 +41,7 @@ class MazeSolver {
     }
   }
 
-  ArrayList<Node> brianSolve() {
+  ArrayList<Node> solve() {
     //while there is something in the fringe
     while (fringe.size ()>0) {
       Node next = fringe.poll(); //get the best node in the fringe (based on heuristic)

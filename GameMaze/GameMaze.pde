@@ -6,6 +6,9 @@
 import processing.video.*;
 Capture cam;
 
+int currentPlayer=-1; //0: PL; 1: CP (nobodys turn in the beginning)
+Player PL;
+Computer CP;
 
 PImage img, edges, blobs, current;
 color bg = color(255);
@@ -13,7 +16,7 @@ color fg = color(200);
 int threshold = 50;
 float contrastAdj = 0.4;
 int pivot = 255 / 2;
-int count, x1, y1, x2, y2;
+int count, x1, y1, x2, y2, goalX, goalY, plX, plY;
 float r2 = sqrt(2);
 ArrayList<Node> sol;
 int i;
@@ -46,10 +49,10 @@ String currentImage;
 //int picNum;
 
 void setup() {
-//  picNum = 1;
-  
+  //  picNum = 1;
+
   //size (640, 480); FIX THIS AT SOME POINT
-  size(500,500);
+  size(500, 500);
   i = 0;
   count = 0;
   edges = createImage(width, height, RGB);
@@ -60,96 +63,118 @@ void setup() {
   String[] cameras = Capture.list();
 
   if (cameras.length == 0) {
-    println("There are no cameras available for capture.");
+
     exit();
   } else {
-    println("Available cameras:");
-    for (int i = 0; i < cameras.length; i++) {
-      println(cameras[i]);
-    }
-
-    // The camera can be initialized directly using an 
-    // element from the array returned by list():
-    cam = new Capture(this, cameras[1]);
+    cam = new Capture(this, cameras[0]);
     cam.start();
   }
 }
 
 void draw() {
-  if (count == 0) {
-    if (cam.available() == true) {
-      cam.read();
-    }
-    image(cam, 0, 0);
+  if (cam.available() == true) {
+    cam.read();
+  }
+  image(cam, 0, 0);
+  if (count == 0) {  
+    //    if (cam.available() == true) {
+    //      cam.read();
+    //    }
+    //    image(cam, 0, 0);
     // The following does the same, and is faster when just drawing the image
     // without any additional resizing, transformations, or tint.
     //set(0, 0, cam);
   } else if (count == 1) {
-
-//    img = loadImage(currentImage);
-    //size(img.width, img.height);
-    //    edges = createImage(width, height, RGB);
-    //    blobs = createImage(width, height, RGB);
-    //    buffer = new int[width][height];
-    //    board = new int[width][height];
-    img = loadImage ("test.png");
+    //    img = loadImage ("test.png");
+    //    drawEdges();
+    //    //image(edges, 0, 0);
+    //    fillBoard();
+    //cam.read();
+    //    image(cam, 0, 0);
+    if (CP == null) 
+      CP = new Computer(x1, y1, 100);
     drawEdges();
-    image(edges, 0, 0);
     fillBoard();
+    CP.draw();
   } else if (count == 2) {
-    drawEdges();
-    image(edges, 0, 0);
-    fillBoard();
-    ellipseMode(CENTER);
-    noStroke();
-    fill(0, 255, 0, 128);
-    ellipse(x1, y1, 10, 10);
+    //    drawEdges();
+    //    //image(edges, 0, 0);
+    //    fillBoard();
+    //    ellipseMode(CENTER);
+    //    noStroke();
+    //    fill(0, 255, 0, 128);
+    //    ellipse(x1, y1, 10, 10);
+    //cam.read();
+    //image(cam, 0, 0);
+    CP.draw();
+    if (PL == null)
+      PL = new Player(x2, y2, 20);
+    PL.draw();
   } else if (count == 3) {
-    drawEdges();
-    image(edges, 0, 0);
-    fillBoard();
-    ellipseMode(CENTER);
-    noStroke();
-    fill(0, 255, 0, 128);
-    ellipse(x1, y1, 10, 10);
-    ellipseMode(CENTER);
-    noStroke();
-    fill(255, 0, 0, 128);
-    ellipse(x2, y2, 10, 10);
-  } else if (count == 4) {
-    if (sol != null && i<sol.size()) {
-      Node n = sol.get(i);
-      set(n.getX(), n.getY(), color(0, 0, 255));
-      fill(0, 0, 255, 128);
-      ellipse(n.getX(), n.getY(), 5, 5);
-      i++;
+    //cam.read();
+    //image(cam, 0, 0);
+    CP.draw();
+    PL.draw();
+    fill(255, 0, 0);
+    rect(goalX - 5, goalY - 5, 10, 10);
+  } else if (currentPlayer == 1) {
+    //    if (sol != null && i<sol.size()) {
+    //      Node n = sol.get(i);
+    //      set(n.getX(), n.getY(), color(0, 0, 255));
+    //      fill(0, 0, 255, 128);
+    //      ellipse(n.getX(), n.getY(), 5, 5);
+    //      i++;
+    //    }
+    PL.draw();
+    fill(255, 0, 0);
+    rect(goalX - 5, goalY - 5, 10, 10);
+
+    if (CP.i != CP.d) {
+      CP.move(board, goalX, goalY);
+    } else {
+      //      currentPlayer = 0;
+      println ("need to clicky");
     }
+    CP.draw();
+  } else if (currentPlayer == 0) {
+    CP.draw();
+    fill(255, 0, 0);
+    rect(goalX - 5, goalY - 5, 10, 10);
+
+    if (PL.i != PL.d) {
+      PL.move (board, plX, plY);
+    } else {
+      currentPlayer = 1;
+    }
+    PL.draw();
   }
+
+  println (currentPlayer);
 }
 
 void mousePressed() {
   if (count == 0) {
-    saveFrame ("test.png");
-//    currentImage = "test-" + picNum + ".png";
-    count++;
-  } else if (count == 1) {
     x1 = mouseX;
     y1 = mouseY;
     count++;
-  } else if (count == 2) {
+  } else if (count == 1) {
     x2 = mouseX;
     y2 = mouseY;
     count++;
-  } else if (count == 3) {
-    int start = millis();
-    MazeSolver something = new MazeSolver (board, /*1, 1, board.length - 2, board[0].length - 2*/x1, y1, x2, y2);
-    sol = something.brianSolve();
+  } else if (count == 2) {
+    goalX = mouseX;
+    goalY = mouseY;
     count++;
-    int step = millis();
-    println (step - start + "ms");
-  } else {
-    i = 0;
-    count = 0;
+  } else if (count == 3) {
+    //    i = 0;
+    //    count = 0;
+    count++;
+  } else if (count == 4) { 
+    currentPlayer = 1;
+    count++;
+  } else if (currentPlayer == 0) {
+    plX = mouseX;
+    plY = mouseY;
   }
 }
 
@@ -182,7 +207,8 @@ void checkEdges(int x, int y) {
 }
 
 int averageVal(int x, int y) {
-  color c = img.get(x, y);
+
+  color c = cam.get(x, y);
   float r = red(c);
   float g = green(c);
   float b = blue(c);
@@ -227,62 +253,6 @@ void checkAdj() {
     contrastAdj = 1;
 }
 
-void blobDetect() {
-  int count = 1;
-  for (int x = 1; x < width - 1; x++) {
-    for (int y = 1; y < height - 1; y++) {
-      if (edges.get(x, y) == bg) {
-        int a = buffer[x - 1][y - 1];
-        int b = buffer[x][y - 1];
-        int c = buffer[x + 1][y - 1];
-        int d = buffer[x - 1][y];
-        if (a == 0 && b == 0 && c == 0 && d == 0) {
-          buffer[x][y] = count;
-          count++;
-        } else {
-          int min = findMin(a, b, c, d);
-          buffer[x][y] = min;
-          if (edges.get(x - 1, y - 1) == fg) 
-            buffer[x - 1][y - 1] = min;
-          if (edges.get(x, y - 1) == fg) 
-            buffer[x][y - 1] = min;
-          if (edges.get(x + 1, y - 1) == fg) 
-            buffer[x + 1][y - 1] = min;
-          if (edges.get(x - 1, y) == fg) 
-            buffer[x - 1][y ] = min;
-        }
-      }
-    }
-  }
-  blobFill(count);
-}
-
-int findMin(int a, int b, int c, int d) {
-  int[] arr = {
-    a, b, c, d
-  };
-  int min = max(arr);
-  if (a < min && a != 0)
-    min = a;
-  if (b < min && b != 0)
-    min = b;
-  if (c < min && c != 0)
-    min = c;
-  if (d < min && d != 0)
-    min = d;  
-  return min;
-}
-
-void blobFill(int c) {
-  float fill = 255 / c;
-  for (int x = 0; x < width; x++) {
-    for (int y = 0; y < height; y++) {
-      int label = buffer[x][y];
-      color co = color(fill * label, 0, 0);
-      blobs.set(x, y, co);
-    }
-  }
-}
 
 void fillBoard() {
   for (int x = 0; x < height; x++) {

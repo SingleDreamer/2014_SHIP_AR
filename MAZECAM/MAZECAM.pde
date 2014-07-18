@@ -17,6 +17,9 @@ int count, x1, y1, x2, y2;
 float r2 = sqrt(2);
 ArrayList<Node> sol;
 int i;
+int currentPlayer = 0; //0: PL; 1: CP
+Player PL = new Player();
+Computer CP = new Computer();
 float[][] kernelLR = {
   {
     1, 0, -1
@@ -72,6 +75,17 @@ void setup() {
     // element from the array returned by list():
     cam = new Capture(this, cameras[1]);
     cam.start();
+    
+    turn();
+  }
+}
+
+void turn(){
+  if(currentPlayer==0){
+    PL.turn();
+  }
+  else{
+    CP.turn();
   }
 }
 
@@ -143,7 +157,7 @@ void mousePressed() {
   } else if (count == 3) {
     int start = millis();
     MazeSolver something = new MazeSolver (board, /*1, 1, board.length - 2, board[0].length - 2*/x1, y1, x2, y2);
-    sol = something.brianSolve();
+    sol = something.solve();
     count++;
     int step = millis();
     println (step - start + "ms");
