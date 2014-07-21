@@ -28,10 +28,10 @@ class Player {
         i ++;
       }
     } 
+    //this doesnt work in current context of code
     else {
       i = 0;
     }
   }
 
 }
-
