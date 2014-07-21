@@ -43,7 +43,7 @@ float[][] kernelUD = {
   }
 };
 int[][] buffer, board;
-boolean edge, blob;
+boolean edge, blob, thingy;
 
 String currentImage;
 //int picNum;
@@ -59,6 +59,8 @@ void setup() {
   blobs = createImage(width, height, RGB);
   buffer = new int[width][height];
   board = new int[width][height];
+
+  thingy = false;
 
   String[] cameras = Capture.list();
 
@@ -132,7 +134,8 @@ void draw() {
     if (CP.i != CP.d) {
       CP.move(board, goalX, goalY);
     } else {
-      //      currentPlayer = 0;
+      CP.i = 0;
+      currentPlayer = 0;
       println ("need to clicky");
     }
     CP.draw();
@@ -141,15 +144,19 @@ void draw() {
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
 
-    if (PL.i != PL.d) {
-      PL.move (board, plX, plY);
-    } else {
-      currentPlayer = 1;
+    if (thingy) {
+      if (PL.i != PL.d) {
+        PL.move (board, plX, plY);
+      } else {
+        PL.i = 0;
+        currentPlayer = 1;
+        thingy = false;
+      }
     }
     PL.draw();
   }
-
-  println (currentPlayer);
+    
+//  println (currentPlayer + ", " + thingy);
 }
 
 void mousePressed() {
@@ -165,14 +172,11 @@ void mousePressed() {
     goalX = mouseX;
     goalY = mouseY;
     count++;
-  } else if (count == 3) {
-    //    i = 0;
-    //    count = 0;
-    count++;
-  } else if (count == 4) { 
+  } else if (count == 3) { 
     currentPlayer = 1;
     count++;
   } else if (currentPlayer == 0) {
+    thingy = true;
     plX = mouseX;
     plY = mouseY;
   }
@@ -266,4 +270,3 @@ void fillBoard() {
     }
   }
 }
-
