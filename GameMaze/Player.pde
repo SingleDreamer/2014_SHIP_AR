@@ -3,12 +3,14 @@ class Player {
   int x, y;
   int d;
   int i;
+  boolean willMoveObstacle;
 
   public Player(int x, int y, int d) {
     this.x = x;
     this.y = y;
     this.d = d;
     i = 0;
+    willMoveObstacle = false;
   }
 
   void draw() {

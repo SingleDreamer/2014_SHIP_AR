@@ -119,6 +119,9 @@ void draw() {
     PL.draw();
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
+  } else if (
+  (CP.x == goalX && CP.y == goalY) || (PL.x == goalX && PL.y == goalY)) {
+    currentPlayer = -1; 
   } else if (currentPlayer == 1) {
     //    if (sol != null && i<sol.size()) {
     //      Node n = sol.get(i);
@@ -144,25 +147,34 @@ void draw() {
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
 
-    if (moving) {
-      if (PL.i < PL.d && dist(PL.x, PL.y, plX, plY) != 0) {
-        PL.move (board, plX, plY);
+    if (!PL.willMoveObstacle) {
+      if (moving) {
+        if (PL.i < PL.d && dist(PL.x, PL.y, plX, plY) != 0) {
+          PL.move (board, plX, plY);
+        } else {
+          print("switch player");
+          PL.i = 0;
+          currentPlayer = 1;
+          moving = false;
+        }
       } else {
-        print("switch player");
-        PL.i = 0;
-        currentPlayer = 1;
-        moving = false;
+        noStroke();
+        fill (0, 255, 0, 50);
+        ellipse (PL.x, PL.y, 100, 100);
       }
     } else {
-      noStroke();
-      fill (0, 255, 0, 50);
-      ellipse (PL.x, PL.y, 100, 100);
+      //recapture photo from camera
+      //end of turn
+      drawEdges();
+      fillBoard();
+      currentPlayer = 1;
+      PL.willMoveObstacle = false;
     }
 
     PL.draw();
   }
 
- // println (currentPlayer + ", " + moving);
+  println (currentPlayer);
 }
 
 void mousePressed() {
@@ -182,10 +194,12 @@ void mousePressed() {
     currentPlayer = 1;
     count++;
   } else if (currentPlayer == 0) {
-    if (dist(PL.x, PL.y, mouseX, mouseY) <= 100) {
-      moving = true;
-      plX = mouseX;
-      plY = mouseY;
+    if (!PL.willMoveObstacle) {
+      if (dist(PL.x, PL.y, mouseX, mouseY) <= 100) {
+        moving = true;
+        plX = mouseX;
+        plY = mouseY;
+      }
     }
   }
 }
@@ -233,6 +247,8 @@ int averageVal(int x, int y) {
 }
 
 void keyPressed() {
+  if (key == 'm')
+    PL.willMoveObstacle = true;
   if (key == 'e') 
     edge = !edge;
   if (key == 'b');
@@ -278,3 +294,4 @@ void fillBoard() {
     }
   }
 }
+
