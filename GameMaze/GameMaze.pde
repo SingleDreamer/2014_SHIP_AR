@@ -43,7 +43,7 @@ float[][] kernelUD = {
   }
 };
 int[][] buffer, board;
-boolean edge, blob, thingy;
+boolean edge, blob, moving;
 
 String currentImage;
 //int picNum;
@@ -60,7 +60,7 @@ void setup() {
   buffer = new int[width][height];
   board = new int[width][height];
 
-  thingy = false;
+  moving = false;
 
   String[] cameras = Capture.list();
 
@@ -68,7 +68,7 @@ void setup() {
 
     exit();
   } else {
-    cam = new Capture(this, cameras[0]);
+    cam = new Capture(this, cameras[1]);
     cam.start();
   }
 }
@@ -144,19 +144,25 @@ void draw() {
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
 
-    if (thingy) {
-      if (PL.i != PL.d) {
+    if (moving) {
+      if (PL.i < PL.d && dist(PL.x, PL.y, plX, plY) != 0) {
         PL.move (board, plX, plY);
       } else {
+        print("switch player");
         PL.i = 0;
         currentPlayer = 1;
-        thingy = false;
+        moving = false;
       }
+    } else {
+      noStroke();
+      fill (0, 255, 0, 50);
+      ellipse (PL.x, PL.y, 100, 100);
     }
+
     PL.draw();
   }
-    
-//  println (currentPlayer + ", " + thingy);
+
+ // println (currentPlayer + ", " + moving);
 }
 
 void mousePressed() {
@@ -176,9 +182,11 @@ void mousePressed() {
     currentPlayer = 1;
     count++;
   } else if (currentPlayer == 0) {
-    thingy = true;
-    plX = mouseX;
-    plY = mouseY;
+    if (dist(PL.x, PL.y, mouseX, mouseY) <= 100) {
+      moving = true;
+      plX = mouseX;
+      plY = mouseY;
+    }
   }
 }
 
