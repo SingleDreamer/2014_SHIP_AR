@@ -71,12 +71,59 @@ void setup() {
     cam = new Capture(this, cameras[1]);
     cam.start();
   }
+  
+}
+
+void findPL(){
+  
+//  int bx1=-1;
+//  int by1=-1;
+//  int bx2=-1;
+//  int by2=-1;
+  
+  int sumX=0;
+  int sumY=0;
+  int numP=0;
+  
+  int bxa, bya;
+  loadPixels();
+  println(pixels.length);
+  for(int k=0; k<pixels.length; k++){
+    color c = pixels[k];
+    float r = red(c);
+    float g = green(c);
+    float b = blue(c);
+    if(r>=70 && r<=90 && g>=150 && g<=165 && b>=200){
+      println("found blue");
+      sumX+=k % width;
+      sumY+=k / width;
+      numP++;
+//      if(bx1==-1){
+//        bx1=k % width;
+//        by1=k / width;
+//      }
+//      else{
+//        bx2=k % width;
+//        by2=k / width;
+//      }
+    } 
+//    bxa = (bx1+bx2)/2;
+//    bya = (by1+by2)/2;
+    //count++;
+  }
+  bxa = sumX / numP;
+  bya = sumY / numP;
+  x2 = bxa;
+  y2 = bya;
 }
 
 void draw() {
+  
+  
   if (cam.available() == true) {
     cam.read();
   }
+  
   image(cam, 0, 0);
   if (count == 0) {  
     //    if (cam.available() == true) {
@@ -95,6 +142,11 @@ void draw() {
     //    image(cam, 0, 0);
     if (CP == null) 
       CP = new Computer(x1, y1, 100);
+    
+      
+    findPL();
+    count++;
+    
     drawEdges();
     fillBoard();
     CP.draw();
@@ -174,19 +226,23 @@ void draw() {
     PL.draw();
   }
 
-  println (currentPlayer);
+  //println (currentPlayer);
 }
 
 void mousePressed() {
+  color c = get(mouseX,mouseY);
+  println("clicked: ("+red(c)+","+green(c)+","+blue(c)+")");
+  
   if (count == 0) {
     x1 = mouseX;
     y1 = mouseY;
     count++;
-  } else if (count == 1) {
+    
+  } /*else if (count == 1) {
     x2 = mouseX;
     y2 = mouseY;
     count++;
-  } else if (count == 2) {
+  } */else if (count == 2) {
     goalX = mouseX;
     goalY = mouseY;
     count++;
@@ -202,6 +258,7 @@ void mousePressed() {
       }
     }
   }
+  
 }
 
 void drawEdges() {
