@@ -93,7 +93,7 @@ void findPL(){
     float r = red(c);
     float g = green(c);
     float b = blue(c);
-    if(r>=70 && r<=90 && g>=150 && g<=165 && b>=200){
+    if(r>=70 && r<=100 && g>=150 && g<=190 && b>=200){
       println("found blue");
       sumX+=k % width;
       sumY+=k / width;
@@ -115,6 +115,49 @@ void findPL(){
   bya = sumY / numP;
   x2 = bxa;
   y2 = bya;
+}
+
+int findEndTurn(){
+  //  int bx1=-1;
+//  int by1=-1;
+//  int bx2=-1;
+//  int by2=-1;
+  
+  int sumX=0;
+  int sumY=0;
+  int numP=0;
+  
+  int bxa, bya;
+  loadPixels();
+  println(pixels.length);
+  for(int k=0; k<pixels.length; k++){
+    color c = pixels[k];
+    float r = red(c);
+    float g = green(c);
+    float b = blue(c);
+    if(r>=140 && r<=180 && g>=0 && g<=70 && b>=150 && b<=180){
+      println("found pink");
+      sumX+=k % width;
+      sumY+=k / width;
+      numP++;
+//      if(bx1==-1){
+//        bx1=k % width;
+//        by1=k / width;
+//      }
+//      else{
+//        bx2=k % width;
+//        by2=k / width;
+//      }
+    } 
+//    bxa = (bx1+bx2)/2;
+//    bya = (by1+by2)/2;
+    //count++;
+  }
+//  bxa = sumX / numP;
+//  bya = sumY / numP;
+//  x2 = bxa;
+//  y2 = bya;
+  return numP;
 }
 
 void draw() {
@@ -145,6 +188,7 @@ void draw() {
     
       
     findPL();
+//    findEndTurn();
     count++;
     
     drawEdges();
@@ -198,7 +242,16 @@ void draw() {
     CP.draw();
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
-
+    println(findEndTurn());
+    if (!PL.willMoveObstacle && findEndTurn()<3) {
+      findPL();
+      if (dist(PL.x, PL.y, x2, y2) <= 100) {
+        moving = true;
+        plX = x2;
+        plY = y2;
+      }
+    }
+    
     if (!PL.willMoveObstacle) {
       if (moving) {
         if (PL.i < PL.d && dist(PL.x, PL.y, plX, plY) != 0) {
@@ -250,13 +303,13 @@ void mousePressed() {
     currentPlayer = 1;
     count++;
   } else if (currentPlayer == 0) {
-    if (!PL.willMoveObstacle) {
-      if (dist(PL.x, PL.y, mouseX, mouseY) <= 100) {
-        moving = true;
-        plX = mouseX;
-        plY = mouseY;
-      }
-    }
+//    if (!PL.willMoveObstacle) {
+//      if (dist(PL.x, PL.y, mouseX, mouseY) <= 100) {
+//        moving = true;
+//        plX = mouseX;
+//        plY = mouseY;
+//      }
+//    }
   }
   
 }
