@@ -9,6 +9,9 @@ Capture cam;
 int currentPlayer=-1; //0: PL; 1: CP (nobodys turn in the beginning)
 Player PL;
 Computer CP;
+boolean endTurn;
+int endTurnCounter=60;
+int ENDTURNCOUNTERMAX = 60;
 
 PImage img, edges, blobs, current;
 color bg = color(255);
@@ -111,13 +114,21 @@ void findPL(){
 //    bya = (by1+by2)/2;
     //count++;
   }
-  bxa = sumX / numP;
-  bya = sumY / numP;
-  x2 = bxa;
-  y2 = bya;
+  if(numP!=0){
+    bxa = sumX / numP;
+    bya = sumY / numP;
+    x2 = bxa;
+    y2 = bya;
+  }
 }
 
-int findEndTurn(){
+void findEndTurn(){
+  if(endTurnCounter>0){
+    endTurn = false;
+    endTurnCounter--;
+    return;
+  }
+  endTurnCounter = ENDTURNCOUNTERMAX;
   //  int bx1=-1;
 //  int by1=-1;
 //  int bx2=-1;
@@ -157,7 +168,7 @@ int findEndTurn(){
 //  bya = sumY / numP;
 //  x2 = bxa;
 //  y2 = bya;
-  return numP;
+  endTurn = (numP<3);
 }
 
 void draw() {
@@ -184,7 +195,7 @@ void draw() {
     //cam.read();
     //    image(cam, 0, 0);
     if (CP == null) 
-      CP = new Computer(x1, y1, 100);
+      CP = new Computer(x1, y1, 50);
     
       
     findPL();
@@ -206,7 +217,7 @@ void draw() {
     //image(cam, 0, 0);
     CP.draw();
     if (PL == null)
-      PL = new Player(x2, y2, 20);
+      PL = new Player(x2, y2, 50);
     PL.draw();
   } else if (count == 3) {
     //cam.read();
@@ -215,8 +226,7 @@ void draw() {
     PL.draw();
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
-  } else if (
-  (CP.x == goalX && CP.y == goalY) || (PL.x == goalX && PL.y == goalY)) {
+  } else if (endgame()) {
     currentPlayer = -1; 
   } else if (currentPlayer == 1) {
     //    if (sol != null && i<sol.size()) {
@@ -242,8 +252,9 @@ void draw() {
     CP.draw();
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
-    println(findEndTurn());
-    if (!PL.willMoveObstacle && findEndTurn()<3) {
+    
+    findEndTurn();
+    if (!PL.willMoveObstacle && endTurn) {
       findPL();
       if (dist(PL.x, PL.y, x2, y2) <= 100) {
         moving = true;
@@ -405,3 +416,7 @@ void fillBoard() {
   }
 }
 
+
+boolean endgame() {
+  return ((CP.x >= goalX - 5 || CP.x <= goalX + 5) && (CP.y >= goalY - 5 || CP.y <= goalY + 5)) || ((PL.x >= goalX - 5 || PL.x <= goalX + 5) && (PL.y >= goalY - 5 || PL.y <= goalY + 5));
+}
