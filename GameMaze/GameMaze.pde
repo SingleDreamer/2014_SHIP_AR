@@ -96,7 +96,7 @@ void findPL(){
     float r = red(c);
     float g = green(c);
     float b = blue(c);
-    if(r>=70 && r<=100 && g>=150 && g<=190 && b>=200){
+    if(r>=70 && r<=100 && g>=120 && g<=190 && b>=170){
       println("found blue");
       sumX+=k % width;
       sumY+=k / width;
@@ -146,7 +146,7 @@ void findEndTurn(){
     float r = red(c);
     float g = green(c);
     float b = blue(c);
-    if(r>=140 && r<=180 && g>=0 && g<=70 && b>=150 && b<=180){
+    if(r>=140 && r<=180 && g>=0 && g<=70 && b>=130 && b<=180){
       println("found pink");
       sumX+=k % width;
       sumY+=k / width;
@@ -169,6 +169,58 @@ void findEndTurn(){
 //  x2 = bxa;
 //  y2 = bya;
   endTurn = (numP<3);
+}
+
+void findGoal(){
+//  if(endTurnCounter>0){
+//    endTurn = false;
+//    endTurnCounter--;
+//    return;
+//  }
+//  endTurnCounter = ENDTURNCOUNTERMAX;
+  //  int bx1=-1;
+//  int by1=-1;
+//  int bx2=-1;
+//  int by2=-1;
+  
+  int sumX=0;
+  int sumY=0;
+  int numP=0;
+  
+  int bxa=0;
+  int bya=0;
+  loadPixels();
+  println(pixels.length);
+  for(int k=0; k<pixels.length; k++){
+    color c = pixels[k];
+    float r = red(c);
+    float g = green(c);
+    float b = blue(c);
+    if(r>=27 && r<=52 && g>=68 && g<=84 && b>=53 && b<=87){
+      println("found green");
+      sumX+=k % width;
+      sumY+=k / width;
+      numP++;
+//      if(bx1==-1){
+//        bx1=k % width;
+//        by1=k / width;
+//      }
+//      else{
+//        bx2=k % width;
+//        by2=k / width;
+//      }
+    } 
+//    bxa = (bx1+bx2)/2;
+//    bya = (by1+by2)/2;
+    //count++;
+  }
+  if (numP != 0){
+    bxa = sumX / numP;
+    bya = sumY / numP;
+  }
+  goalX = bxa;
+  goalY = bya;
+//  endTurn = (numP<3);
 }
 
 void draw() {
@@ -224,11 +276,17 @@ void draw() {
     //image(cam, 0, 0);
     CP.draw();
     PL.draw();
+    
+    findGoal();
+    count++;
+    
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
-  } else if (endgame()) {
+  } 
+  else if (endgame()) {
     currentPlayer = -1; 
-  } else if (currentPlayer == 1) {
+  } 
+  else if (currentPlayer == 1) {
     //    if (sol != null && i<sol.size()) {
     //      Node n = sol.get(i);
     //      set(n.getX(), n.getY(), color(0, 0, 255));
@@ -306,11 +364,11 @@ void mousePressed() {
     x2 = mouseX;
     y2 = mouseY;
     count++;
-  } */else if (count == 2) {
+  } else if (count == 2) {
     goalX = mouseX;
     goalY = mouseY;
     count++;
-  } else if (count == 3) { 
+  } */else if (count == 3) { 
     currentPlayer = 1;
     count++;
   } else if (currentPlayer == 0) {
@@ -418,5 +476,5 @@ void fillBoard() {
 
 
 boolean endgame() {
-  return ((CP.x >= goalX - 5 || CP.x <= goalX + 5) && (CP.y >= goalY - 5 || CP.y <= goalY + 5)) || ((PL.x >= goalX - 5 || PL.x <= goalX + 5) && (PL.y >= goalY - 5 || PL.y <= goalY + 5));
+  return ((CP.x >= goalX - 5 && CP.x <= goalX + 5) && (CP.y >= goalY - 5 && CP.y <= goalY + 5)) || ((PL.x >= goalX - 5 && PL.x <= goalX + 5) && (PL.y >= goalY - 5 && PL.y <= goalY + 5));
 }
