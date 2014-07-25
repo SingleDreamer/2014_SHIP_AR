@@ -35,5 +35,5 @@ class Player {
       i = 0;
     }
   }
-
 }
+

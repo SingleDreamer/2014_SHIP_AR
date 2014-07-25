@@ -50,7 +50,7 @@ class MazeSolver {
         next = fringe.poll();
       }
       next.setVisited(true); //make sure this node is not removed from the fringe ever again
-//      println("next: "+next);
+      //      println("next: "+next);
       if (next == end) {
         //we found the end!
         ArrayList<Node> path = getPath(next);
@@ -72,14 +72,14 @@ class MazeSolver {
 
     //there is nothing left in the fringe and the end has not been found ==> there is no solution to the given maze
     println("empty fringe; no solution");
-    PImage err = new PImage(maze[0].length,maze.length);
-    for(int x=0; x<err.width; x++){
-      for(int y=0; y<err.height; y++){
+    PImage err = new PImage(maze[0].length, maze.length);
+    for (int x=0; x<err.width; x++) {
+      for (int y=0; y<err.height; y++) {
         color c = color(255);
-        if(maze[y][x]==0){
+        if (maze[y][x]==0) {
           c=color(0);
         }
-        err.set(x,y,c);
+        err.set(x, y, c);
       }
     } 
     err.save(savePath("error.png"));
@@ -121,7 +121,7 @@ class MazeSolver {
       maze[n.getY()][n.getX()]=-1; // an element of the maze that is part of the path is marked with a -1
     }
   }
-  
+
   int[][] getMaze() {
     return maze;
   }
@@ -143,5 +143,6 @@ class MazeSolver {
 
     return path;
   }
+
 }
 

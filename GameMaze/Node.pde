@@ -1,5 +1,5 @@
-class Node implements Comparable{
- 
+class Node implements Comparable {
+
   int x, y;
   float h;
   float traveled=Integer.MAX_VALUE;
@@ -7,69 +7,68 @@ class Node implements Comparable{
   boolean visited = false;
 
 
-  public Node(int x, int y){
+  public Node(int x, int y) {
     parent = null;
     this.x=x;
     this.y=y;
   }
-  public Node(int x, int y, float h){
+  public Node(int x, int y, float h) {
     this.x=x;
     this.y=y;
     this.h=h;
   }
-  
-  int getX(){
+
+  int getX() {
     return x;
   }
-  int getY(){
+  int getY() {
     return y;
   }
-  float getH(){
+  float getH() {
     return h;
   }
-  float getTraveled(){
+  float getTraveled() {
     return traveled;
   }
-  void setTraveled(float t){
+  void setTraveled(float t) {
     traveled=t;
   }
-  void setH(float newh){
+  void setH(float newh) {
     h = newh;
   }
-  Node getParent(){
+  Node getParent() {
     return parent;
   }
-  void setParent(Node n){
+  void setParent(Node n) {
     parent = n;
   }
-  
+
   //Node are compared based on the heuristic value
-  int compareTo(Object o){
-    if(o instanceof Node){
+  int compareTo(Object o) {
+    if (o instanceof Node) {
       Node n = (Node)o;
       float diff = h-n.getH();
-      if(diff>0){
+      if (diff>0) {
         return 1;
-      }
-      else if(diff<0){
+      } else if (diff<0) {
         return -1;
-      }else{
+      } else {
         return 0;
       }
-    }
-    else{
+    } else {
       return 0;
     }
   }
-  
-  boolean isVisited(){
+
+  boolean isVisited() {
     return visited;
   }
-  void setVisited(boolean v){
+  void setVisited(boolean v) {
     visited = v;
   }
-  
+
   String toString() {
     return "{" + x + "," + y + "}";
   }
 }
+

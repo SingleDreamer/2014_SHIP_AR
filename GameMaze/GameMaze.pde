@@ -74,47 +74,46 @@ void setup() {
     cam = new Capture(this, cameras[1]);
     cam.start();
   }
-  
 }
 
-void findPL(){
-  
-//  int bx1=-1;
-//  int by1=-1;
-//  int bx2=-1;
-//  int by2=-1;
-  
+void findPL() {
+
+  //  int bx1=-1;
+  //  int by1=-1;
+  //  int bx2=-1;
+  //  int by2=-1;
+
   int sumX=0;
   int sumY=0;
   int numP=0;
-  
+
   int bxa, bya;
   loadPixels();
   println(pixels.length);
-  for(int k=0; k<pixels.length; k++){
+  for (int k=0; k<pixels.length; k++) {
     color c = pixels[k];
     float r = red(c);
     float g = green(c);
     float b = blue(c);
-    if(r>=70 && r<=100 && g>=120 && g<=190 && b>=170){
+    if (r>=70 && r<=100 && g>=120 && g<=190 && b>=170) {
       println("found blue");
       sumX+=k % width;
       sumY+=k / width;
       numP++;
-//      if(bx1==-1){
-//        bx1=k % width;
-//        by1=k / width;
-//      }
-//      else{
-//        bx2=k % width;
-//        by2=k / width;
-//      }
+      //      if(bx1==-1){
+      //        bx1=k % width;
+      //        by1=k / width;
+      //      }
+      //      else{
+      //        bx2=k % width;
+      //        by2=k / width;
+      //      }
     } 
-//    bxa = (bx1+bx2)/2;
-//    bya = (by1+by2)/2;
+    //    bxa = (bx1+bx2)/2;
+    //    bya = (by1+by2)/2;
     //count++;
   }
-  if(numP!=0){
+  if (numP!=0) {
     bxa = sumX / numP;
     bya = sumY / numP;
     x2 = bxa;
@@ -122,114 +121,115 @@ void findPL(){
   }
 }
 
-void findEndTurn(){
-  if(endTurnCounter>0){
+void findEndTurn() {
+  if (endTurnCounter>0) {
     endTurn = false;
     endTurnCounter--;
     return;
   }
   endTurnCounter = ENDTURNCOUNTERMAX;
   //  int bx1=-1;
-//  int by1=-1;
-//  int bx2=-1;
-//  int by2=-1;
-  
+  //  int by1=-1;
+  //  int bx2=-1;
+  //  int by2=-1;
+
   int sumX=0;
   int sumY=0;
   int numP=0;
-  
+
   int bxa, bya;
   loadPixels();
   println(pixels.length);
-  for(int k=0; k<pixels.length; k++){
+  for (int k=0; k<pixels.length; k++) {
     color c = pixels[k];
     float r = red(c);
     float g = green(c);
     float b = blue(c);
-    if(r>=140 && r<=180 && g>=0 && g<=70 && b>=130 && b<=180){
+    if (r>=140 && r<=180 && g>=0 && g<=70 && b>=130 && b<=180) {
       println("found pink");
       sumX+=k % width;
       sumY+=k / width;
       numP++;
-//      if(bx1==-1){
-//        bx1=k % width;
-//        by1=k / width;
-//      }
-//      else{
-//        bx2=k % width;
-//        by2=k / width;
-//      }
+      //      if(bx1==-1){
+      //        bx1=k % width;
+      //        by1=k / width;
+      //      }
+      //      else{
+      //        bx2=k % width;
+      //        by2=k / width;
+      //      }
     } 
-//    bxa = (bx1+bx2)/2;
-//    bya = (by1+by2)/2;
+    //    bxa = (bx1+bx2)/2;
+    //    bya = (by1+by2)/2;
     //count++;
   }
-//  bxa = sumX / numP;
-//  bya = sumY / numP;
-//  x2 = bxa;
-//  y2 = bya;
+  //  bxa = sumX / numP;
+  //  bya = sumY / numP;
+  //  x2 = bxa;
+  //  y2 = bya;
   endTurn = (numP<3);
 }
 
-void findGoal(){
-//  if(endTurnCounter>0){
-//    endTurn = false;
-//    endTurnCounter--;
-//    return;
-//  }
-//  endTurnCounter = ENDTURNCOUNTERMAX;
+void findGoal() {
+  //  if(endTurnCounter>0){
+  //    endTurn = false;
+  //    endTurnCounter--;
+  //    return;
+  //  }
+  //  endTurnCounter = ENDTURNCOUNTERMAX;
   //  int bx1=-1;
-//  int by1=-1;
-//  int bx2=-1;
-//  int by2=-1;
-  
+  //  int by1=-1;
+  //  int bx2=-1;
+  //  int by2=-1;
+
   int sumX=0;
   int sumY=0;
   int numP=0;
-  
+
   int bxa=0;
   int bya=0;
   loadPixels();
   println(pixels.length);
-  for(int k=0; k<pixels.length; k++){
+  for (int k=0; k<pixels.length; k++) {
     color c = pixels[k];
     float r = red(c);
     float g = green(c);
     float b = blue(c);
-    if(r>=27 && r<=52 && g>=68 && g<=84 && b>=53 && b<=87){
+    if (r>=19 && r<=30 && g>=57 && g<=79 && b>=76 && b<=99) {
       println("found green");
       sumX+=k % width;
       sumY+=k / width;
       numP++;
-//      if(bx1==-1){
-//        bx1=k % width;
-//        by1=k / width;
-//      }
-//      else{
-//        bx2=k % width;
-//        by2=k / width;
-//      }
+      //      if(bx1==-1){
+      //        bx1=k % width;
+      //        by1=k / width;
+      //      }
+      //      else{
+      //        bx2=k % width;
+      //        by2=k / width;
+      //      }
     } 
-//    bxa = (bx1+bx2)/2;
-//    bya = (by1+by2)/2;
+    //    bxa = (bx1+bx2)/2;
+    //    bya = (by1+by2)/2;
     //count++;
   }
-  if (numP != 0){
+  if (numP != 0) {
     bxa = sumX / numP;
     bya = sumY / numP;
   }
   goalX = bxa;
   goalY = bya;
-//  endTurn = (numP<3);
+  removeEdges(goalX, goalY, 20);
+  //  endTurn = (numP<3);
 }
 
 void draw() {
-  
-  
+
+
   if (cam.available() == true) {
     cam.read();
   }
-  
+
   image(cam, 0, 0);
   if (count == 0) {  
     //    if (cam.available() == true) {
@@ -248,12 +248,12 @@ void draw() {
     //    image(cam, 0, 0);
     if (CP == null) 
       CP = new Computer(x1, y1, 50);
-    
-      
+
+
     findPL();
-//    findEndTurn();
+    //    findEndTurn();
     count++;
-    
+
     drawEdges();
     fillBoard();
     CP.draw();
@@ -271,22 +271,21 @@ void draw() {
     if (PL == null)
       PL = new Player(x2, y2, 50);
     PL.draw();
+
+    //println("hello"); //so it doesnt even get to here 
+    findGoal();
+    count++;
   } else if (count == 3) {
     //cam.read();
     //image(cam, 0, 0);
     CP.draw();
     PL.draw();
-    
-    findGoal();
-    count++;
-    
+
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
-  } 
-  else if (endgame()) {
-    currentPlayer = -1; 
-  } 
-  else if (currentPlayer == 1) {
+  } else if (endgame()) {
+    currentPlayer = -1;
+  } else if (currentPlayer == 1) {
     //    if (sol != null && i<sol.size()) {
     //      Node n = sol.get(i);
     //      set(n.getX(), n.getY(), color(0, 0, 255));
@@ -310,7 +309,7 @@ void draw() {
     CP.draw();
     fill(255, 0, 0);
     rect(goalX - 5, goalY - 5, 10, 10);
-    
+
     findEndTurn();
     if (!PL.willMoveObstacle && endTurn) {
       findPL();
@@ -320,7 +319,7 @@ void draw() {
         plY = y2;
       }
     }
-    
+
     if (!PL.willMoveObstacle) {
       if (moving) {
         if (PL.i < PL.d && dist(PL.x, PL.y, plX, plY) != 0) {
@@ -352,35 +351,34 @@ void draw() {
 }
 
 void mousePressed() {
-  color c = get(mouseX,mouseY);
+  color c = get(mouseX, mouseY);
   println("clicked: ("+red(c)+","+green(c)+","+blue(c)+")");
-  
+
   if (count == 0) {
     x1 = mouseX;
     y1 = mouseY;
     count++;
-    
   } /*else if (count == 1) {
-    x2 = mouseX;
-    y2 = mouseY;
-    count++;
-  } else if (count == 2) {
-    goalX = mouseX;
-    goalY = mouseY;
-    count++;
-  } */else if (count == 3) { 
+   x2 = mouseX;
+   y2 = mouseY;
+   count++;
+   } else if (count == 2) {
+   goalX = mouseX;
+   goalY = mouseY;
+   count++;
+   } */
+  else if (count == 3) { 
     currentPlayer = 1;
     count++;
   } else if (currentPlayer == 0) {
-//    if (!PL.willMoveObstacle) {
-//      if (dist(PL.x, PL.y, mouseX, mouseY) <= 100) {
-//        moving = true;
-//        plX = mouseX;
-//        plY = mouseY;
-//      }
-//    }
+    //    if (!PL.willMoveObstacle) {
+    //      if (dist(PL.x, PL.y, mouseX, mouseY) <= 100) {
+    //        moving = true;
+    //        plX = mouseX;
+    //        plY = mouseY;
+    //      }
+    //    }
   }
-  
 }
 
 void drawEdges() {
@@ -474,7 +472,19 @@ void fillBoard() {
   }
 }
 
+  void removeEdges(int x, int y, int r) {
+    for (int i = r * -1; i <= r; i++) {
+      for (int j = r * -1; j <= r; j++) {
+        try {
+          board[x + i][y + j] = 0;
+        }
+        catch (Exception e) {
+        }
+      }
+    }
+  }
 
 boolean endgame() {
   return ((CP.x >= goalX - 5 && CP.x <= goalX + 5) && (CP.y >= goalY - 5 && CP.y <= goalY + 5)) || ((PL.x >= goalX - 5 && PL.x <= goalX + 5) && (PL.y >= goalY - 5 && PL.y <= goalY + 5));
 }
+
