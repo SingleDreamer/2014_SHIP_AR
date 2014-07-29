@@ -49,11 +49,10 @@ int[][] buffer, board;
 boolean edge, blob, moving;
 
 String currentImage;
+String endPlayer;
 //int picNum;
 
 void setup() {
-  //  picNum = 1;
-
   //size (640, 480); FIX THIS AT SOME POINT
   size(500, 500);
   i = 0;
@@ -77,12 +76,6 @@ void setup() {
 }
 
 void findPL() {
-
-  //  int bx1=-1;
-  //  int by1=-1;
-  //  int bx2=-1;
-  //  int by2=-1;
-
   int sumX=0;
   int sumY=0;
   int numP=0;
@@ -96,22 +89,11 @@ void findPL() {
     float g = green(c);
     float b = blue(c);
     if (r>=70 && r<=100 && g>=120 && g<=190 && b>=170) {
-      println("found blue");
+      //println("found blue");
       sumX+=k % width;
       sumY+=k / width;
       numP++;
-      //      if(bx1==-1){
-      //        bx1=k % width;
-      //        by1=k / width;
-      //      }
-      //      else{
-      //        bx2=k % width;
-      //        by2=k / width;
-      //      }
-    } 
-    //    bxa = (bx1+bx2)/2;
-    //    bya = (by1+by2)/2;
-    //count++;
+    }
   }
   if (numP!=0) {
     bxa = sumX / numP;
@@ -128,15 +110,9 @@ void findEndTurn() {
     return;
   }
   endTurnCounter = ENDTURNCOUNTERMAX;
-  //  int bx1=-1;
-  //  int by1=-1;
-  //  int bx2=-1;
-  //  int by2=-1;
-
   int sumX=0;
   int sumY=0;
   int numP=0;
-
   int bxa, bya;
   loadPixels();
   println(pixels.length);
@@ -146,72 +122,34 @@ void findEndTurn() {
     float g = green(c);
     float b = blue(c);
     if (r>=140 && r<=180 && g>=0 && g<=70 && b>=130 && b<=180) {
-      println("found pink");
+      //println("found pink");
       sumX+=k % width;
       sumY+=k / width;
       numP++;
-      //      if(bx1==-1){
-      //        bx1=k % width;
-      //        by1=k / width;
-      //      }
-      //      else{
-      //        bx2=k % width;
-      //        by2=k / width;
-      //      }
-    } 
-    //    bxa = (bx1+bx2)/2;
-    //    bya = (by1+by2)/2;
-    //count++;
+    }
   }
-  //  bxa = sumX / numP;
-  //  bya = sumY / numP;
-  //  x2 = bxa;
-  //  y2 = bya;
   endTurn = (numP<3);
 }
 
 void findGoal() {
-  //  if(endTurnCounter>0){
-  //    endTurn = false;
-  //    endTurnCounter--;
-  //    return;
-  //  }
-  //  endTurnCounter = ENDTURNCOUNTERMAX;
-  //  int bx1=-1;
-  //  int by1=-1;
-  //  int bx2=-1;
-  //  int by2=-1;
-
-  int sumX=0;
-  int sumY=0;
-  int numP=0;
-
-  int bxa=0;
+  int sumX=0; 
+  int sumY=0; 
+  int numP=0; 
+  int bxa=0; 
   int bya=0;
   loadPixels();
-  println(pixels.length);
+  //println(pixels.length);
   for (int k=0; k<pixels.length; k++) {
     color c = pixels[k];
     float r = red(c);
     float g = green(c);
     float b = blue(c);
-    if (r>=19 && r<=30 && g>=57 && g<=79 && b>=76 && b<=99) {
-      println("found green");
+    if (r>=40 && r<=50 && g>=90 && g<=120 && b>=120 && b<=140) {
+      //println("found green");
       sumX+=k % width;
       sumY+=k / width;
       numP++;
-      //      if(bx1==-1){
-      //        bx1=k % width;
-      //        by1=k / width;
-      //      }
-      //      else{
-      //        bx2=k % width;
-      //        by2=k / width;
-      //      }
-    } 
-    //    bxa = (bx1+bx2)/2;
-    //    bya = (by1+by2)/2;
-    //count++;
+    }
   }
   if (numP != 0) {
     bxa = sumX / numP;
@@ -220,134 +158,119 @@ void findGoal() {
   goalX = bxa;
   goalY = bya;
   removeEdges(goalX, goalY, 20);
-  //  endTurn = (numP<3);
+}
+
+void printWinner() {
+  textSize(32);
+  text(endPlayer, 10, 30); 
+  fill(255);
+}
+
+void setupCP() {
+  if (CP == null) {
+    print("CP");
+    CP = new Computer(x1, y1, 50);
+  }
+  findPL();
+  count++;
+  drawEdges();
+  fillBoard();
+  CP.draw();
+}
+
+void setupPL() {
+  CP.draw();
+  if (PL == null) {
+    PL = new Player(x2, y2, 50);
+  }
+  PL.draw(); 
+  findGoal();
+  count++;
+}
+
+void update() {
+  CP.draw();
+  PL.draw();
+  fill(255, 0, 0);
+  rect(goalX - 5, goalY - 5, 10, 10);
+}
+
+void turnCP() {
+  PL.draw();
+  fill(255, 0, 0);
+  rect(goalX - 5, goalY - 5, 10, 10);
+  if (CP.i != CP.d) {
+    CP.move(board, goalX, goalY);
+  } else {
+    CP.i = 0;
+    currentPlayer = 0;
+    println ("need to clicky");
+  }
+  CP.draw();
+}
+
+
+void turnPL() {
+  CP.draw();
+  fill(255, 0, 0);
+  rect(goalX - 5, goalY - 5, 10, 10);
+  findEndTurn();
+  if (!PL.willMoveObstacle && endTurn) {
+    findPL();
+    if (dist(PL.x, PL.y, x2, y2) <= 100) {
+      moving = true;
+      plX = x2;
+      plY = y2;
+      removeEdges(plX, plY, 50);
+    }
+  }
+  if (!PL.willMoveObstacle) {
+    if (moving) {
+      if (PL.i < PL.d && dist(PL.x, PL.y, plX, plY) != 0) {
+        PL.move (board, plX, plY);
+      } else {
+        print("switch player");
+        PL.i = 0;
+        currentPlayer = 1;
+        moving = false;
+      }
+    } else {
+      noStroke();
+      fill (0, 255, 0, 50);
+      ellipse (PL.x, PL.y, 100, 100);
+    }
+  } else {
+    //end of turn
+    drawEdges();
+    fillBoard();
+    currentPlayer = 1;
+    PL.willMoveObstacle = false;
+  }
+  PL.draw();
 }
 
 void draw() {
-
-
+  println(count);
   if (cam.available() == true) {
     cam.read();
   }
-
   image(cam, 0, 0);
-  if (count == 0) {  
-    //    if (cam.available() == true) {
-    //      cam.read();
-    //    }
-    //    image(cam, 0, 0);
-    // The following does the same, and is faster when just drawing the image
-    // without any additional resizing, transformations, or tint.
-    //set(0, 0, cam);
+  if (count == 0) {
+  } else if (currentPlayer == -2) {
+    printWinner();
   } else if (count == 1) {
-    //    img = loadImage ("test.png");
-    //    drawEdges();
-    //    //image(edges, 0, 0);
-    //    fillBoard();
-    //cam.read();
-    //    image(cam, 0, 0);
-    if (CP == null) 
-      CP = new Computer(x1, y1, 50);
-
-
-    findPL();
-    //    findEndTurn();
-    count++;
-
-    drawEdges();
-    fillBoard();
-    CP.draw();
+    setupCP();
   } else if (count == 2) {
-    //    drawEdges();
-    //    //image(edges, 0, 0);
-    //    fillBoard();
-    //    ellipseMode(CENTER);
-    //    noStroke();
-    //    fill(0, 255, 0, 128);
-    //    ellipse(x1, y1, 10, 10);
-    //cam.read();
-    //image(cam, 0, 0);
-    CP.draw();
-    if (PL == null)
-      PL = new Player(x2, y2, 50);
-    PL.draw();
-
-    //println("hello"); //so it doesnt even get to here 
-    findGoal();
-    count++;
+    setupPL();
   } else if (count == 3) {
-    //cam.read();
-    //image(cam, 0, 0);
-    CP.draw();
-    PL.draw();
-
-    fill(255, 0, 0);
-    rect(goalX - 5, goalY - 5, 10, 10);
+    update();
   } else if (endgame()) {
-    currentPlayer = -1;
+    currentPlayer = -2;
   } else if (currentPlayer == 1) {
-    //    if (sol != null && i<sol.size()) {
-    //      Node n = sol.get(i);
-    //      set(n.getX(), n.getY(), color(0, 0, 255));
-    //      fill(0, 0, 255, 128);
-    //      ellipse(n.getX(), n.getY(), 5, 5);
-    //      i++;
-    //    }
-    PL.draw();
-    fill(255, 0, 0);
-    rect(goalX - 5, goalY - 5, 10, 10);
-
-    if (CP.i != CP.d) {
-      CP.move(board, goalX, goalY);
-    } else {
-      CP.i = 0;
-      currentPlayer = 0;
-      println ("need to clicky");
-    }
-    CP.draw();
+    turnCP();
   } else if (currentPlayer == 0) {
-    CP.draw();
-    fill(255, 0, 0);
-    rect(goalX - 5, goalY - 5, 10, 10);
-
-    findEndTurn();
-    if (!PL.willMoveObstacle && endTurn) {
-      findPL();
-      if (dist(PL.x, PL.y, x2, y2) <= 100) {
-        moving = true;
-        plX = x2;
-        plY = y2;
-      }
-    }
-
-    if (!PL.willMoveObstacle) {
-      if (moving) {
-        if (PL.i < PL.d && dist(PL.x, PL.y, plX, plY) != 0) {
-          PL.move (board, plX, plY);
-        } else {
-          print("switch player");
-          PL.i = 0;
-          currentPlayer = 1;
-          moving = false;
-        }
-      } else {
-        noStroke();
-        fill (0, 255, 0, 50);
-        ellipse (PL.x, PL.y, 100, 100);
-      }
-    } else {
-      //recapture photo from camera
-      //end of turn
-      drawEdges();
-      fillBoard();
-      currentPlayer = 1;
-      PL.willMoveObstacle = false;
-    }
-
-    PL.draw();
+    turnPL();
   }
-
-  //println (currentPlayer);
 }
 
 void mousePressed() {
@@ -358,26 +281,9 @@ void mousePressed() {
     x1 = mouseX;
     y1 = mouseY;
     count++;
-  } /*else if (count == 1) {
-   x2 = mouseX;
-   y2 = mouseY;
-   count++;
-   } else if (count == 2) {
-   goalX = mouseX;
-   goalY = mouseY;
-   count++;
-   } */
-  else if (count == 3) { 
+  } else if (count == 3) { 
     currentPlayer = 1;
     count++;
-  } else if (currentPlayer == 0) {
-    //    if (!PL.willMoveObstacle) {
-    //      if (dist(PL.x, PL.y, mouseX, mouseY) <= 100) {
-    //        moving = true;
-    //        plX = mouseX;
-    //        plY = mouseY;
-    //      }
-    //    }
   }
 }
 
@@ -472,19 +378,25 @@ void fillBoard() {
   }
 }
 
-  void removeEdges(int x, int y, int r) {
-    for (int i = r * -1; i <= r; i++) {
-      for (int j = r * -1; j <= r; j++) {
-        try {
-          board[x + i][y + j] = 0;
-        }
-        catch (Exception e) {
-        }
+void removeEdges(int x, int y, int r) {
+  for (int i = r * -1; i <= r; i++) {
+    for (int j = r * -1; j <= r; j++) {
+      try {
+        board[y + j][x + i] = 0;
+      }
+      catch (Exception e) {
       }
     }
   }
+}
 
 boolean endgame() {
+  if ((CP.x >= goalX - 5 && CP.x <= goalX + 5) && (CP.y >= goalY - 5 && CP.y <= goalY + 5)) {
+    endPlayer = "CP wins!";
+  } else {
+    endPlayer = "PL wins!";
+  }
   return ((CP.x >= goalX - 5 && CP.x <= goalX + 5) && (CP.y >= goalY - 5 && CP.y <= goalY + 5)) || ((PL.x >= goalX - 5 && PL.x <= goalX + 5) && (PL.y >= goalY - 5 && PL.y <= goalY + 5));
 }
+
 

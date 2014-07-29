@@ -15,7 +15,9 @@ class Computer {
     this.d = 20;
     i = 0;
   }
-
+  String toString() {
+    return "CP";
+  }
 
   void move (int[][] board, int endX, int endY) {
     MazeSolver ms = new MazeSolver (board, x, y, endX, endY);
