@@ -1,7 +1,4 @@
-2014_SHIP_AR
-============
-
-Augmented Reality project for CSTUY SHIP 2014
+## Augmented Reality project for CSTUY SHIP 2014
 
 Create a maze using blocks in real life, then race against the computer!
 
