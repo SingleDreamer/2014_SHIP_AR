@@ -3,6 +3,10 @@
 
 Augmented Reality project for CSTUY SHIP 2014
 
+Create a maze using blocks in real life, then race against the computer!
+
+https://vimeo.com/103046506
+
 ----
 ####Project 1: 
 AR mazesolver. Use edge detection to translate an image (either static or camera) into a binary 2D array. 
